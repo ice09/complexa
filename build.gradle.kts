@@ -20,6 +20,16 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+	// JUnit 5
+	testImplementation("org.junit.jupiter:junit-jupiter")
+	testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+
+	// Cucumber dependencies
+	testImplementation("io.cucumber:cucumber-java:7.18.1")
+	testImplementation("io.cucumber:cucumber-spring:7.18.1")
+	testImplementation("io.cucumber:cucumber-junit:7.18.1")
+
 }
 
 tasks.withType<Test> {
