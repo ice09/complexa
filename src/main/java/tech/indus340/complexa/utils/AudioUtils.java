@@ -13,7 +13,7 @@ public class AudioUtils {
     public static final double DEFAULT_SILENCE_THRESHOLD = 0.02; // Default threshold for detecting noise
     public static final int DEFAULT_BUFFER_SIZE = 1024; // Default buffer size
     public static final long DEFAULT_SILENCE_THRESHOLD_MS = 2000; // Silence threshold duration in milliseconds
-    public static final long DEFAULT_SILENCE_CONTINUOUS_THRESHOLD_MS = 1000; // Silence threshold duration in milliseconds
+    public static final long DEFAULT_SILENCE_CONTINUOUS_THRESHOLD_MS = 700; // Silence threshold duration in milliseconds
 
     private static long silenceStartTime;
 
