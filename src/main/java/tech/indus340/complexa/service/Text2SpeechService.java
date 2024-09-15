@@ -1,16 +1,17 @@
 package tech.indus340.complexa.service;
 
 import io.github.sashirestela.openai.SimpleOpenAI;
-import io.github.sashirestela.openai.domain.audio.AudioResponseFormat;
 import io.github.sashirestela.openai.domain.audio.SpeechRequest;
-import io.github.sashirestela.openai.domain.audio.TranscriptionRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.FileOutputStream;
 
 @Service
 public class Text2SpeechService {
+
+    private static final Logger log = LoggerFactory.getLogger(Text2SpeechService.class);
 
     private final SimpleOpenAI simpleOpenAI;
 
@@ -31,10 +32,10 @@ public class Text2SpeechService {
         try {
             var audioFile = new FileOutputStream("response.wav");
             audioFile.write(speechResponse.readAllBytes());
-            System.out.println(audioFile.getChannel().size() + " bytes");
+            log.info("file size: " + audioFile.getChannel().size() + " bytes");
             audioFile.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error during TTS", e);
         }
     }
 }

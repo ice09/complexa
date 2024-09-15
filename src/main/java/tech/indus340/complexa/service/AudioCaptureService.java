@@ -1,5 +1,7 @@
 package tech.indus340.complexa.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.sound.sampled.*;
@@ -11,7 +13,9 @@ import java.io.IOException;
 @Service
 public class AudioCaptureService {
 
-    private static final int RECORD_TIME = 3000; // 1 second
+    private static final Logger log = LoggerFactory.getLogger(AudioCaptureService.class);
+
+    public static final int RECORD_TIME = 3000;
     private int counter;
 
     public File captureAudio() {
@@ -46,7 +50,7 @@ public class AudioCaptureService {
 
             AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
         } catch (LineUnavailableException | IOException ex) {
-            ex.printStackTrace();
+            log.error("Error during audio capture.", ex);
             return null;
         }
         return wavFile;

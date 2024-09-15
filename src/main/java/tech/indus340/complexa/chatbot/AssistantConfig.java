@@ -15,6 +15,8 @@ import static java.time.Duration.ofSeconds;
 @Configuration
 public class AssistantConfig {
 
+    private final static int KONTEXT_WINDOW_MESSAGES_SIZE = 10;
+
     @Value("${openai.key}")
     private String openAIKey;
 
@@ -29,7 +31,7 @@ public class AssistantConfig {
 
     @Bean
     public Assistant assistant(ChatLanguageModel model) {
-        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(10);
+        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(KONTEXT_WINDOW_MESSAGES_SIZE);
         return AiServices.builder(Assistant.class).chatMemory(chatMemory).chatLanguageModel(model).build();
     }
 }

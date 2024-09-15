@@ -1,5 +1,7 @@
 package tech.indus340.complexa.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.sound.sampled.*;
@@ -8,6 +10,8 @@ import java.io.IOException;
 
 @Service
 public class WavPlayer {
+
+    private static final Logger log = LoggerFactory.getLogger(WavPlayer.class);
 
     public void play(File wavFile) {
         AudioInputStream audioInputStream = null;
@@ -40,10 +44,9 @@ public class WavPlayer {
 
             // Finish playing by draining the SourceDataLine
             sourceLine.drain();
-            System.out.println("Playback finished.");
 
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
+            log.error("Cannot play WAV", e);
         } finally {
             // Ensure the line and stream are closed properly
             if (sourceLine != null) {
@@ -53,7 +56,7 @@ public class WavPlayer {
                 try {
                     audioInputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("Cannot play WAV", e);
                 }
             }
         }

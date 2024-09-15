@@ -1,14 +1,20 @@
 package tech.indus340.complexa.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.sound.sampled.*;
 import java.io.*;
 
 public class AudioUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(AudioUtils.class);
+
     public static final double DEFAULT_SILENCE_THRESHOLD = 0.02; // Default threshold for detecting noise
     public static final int DEFAULT_BUFFER_SIZE = 1024; // Default buffer size
     public static final long DEFAULT_SILENCE_THRESHOLD_MS = 2000; // Silence threshold duration in milliseconds
-    public static final long DEFAULT_SILENCE_CONTINUOUS_THRESHOLD_MS = 500; // Silence threshold duration in milliseconds
+    public static final long DEFAULT_SILENCE_CONTINUOUS_THRESHOLD_MS = 1000; // Silence threshold duration in milliseconds
+
     private static long silenceStartTime;
 
     // Public method for recording audio until a certain duration of silence is detected
@@ -31,7 +37,7 @@ public class AudioUtils {
 
             return saveRecordingToFile(audioOutputStream.toByteArray(), format);
         } catch (LineUnavailableException | IOException e) {
-            e.printStackTrace();
+            log.error("Error during audio recording.", e);
             return null;
         } finally {
             silenceStartTime = 0;
@@ -68,7 +74,7 @@ public class AudioUtils {
         File wavFile = new File("recording_" + System.currentTimeMillis() + ".wav");
 
         AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, wavFile);
-        System.out.println("Recording saved as " + wavFile.getName());
+        log.info("Recording saved as " + wavFile.getName());
 
         return wavFile;
     }
@@ -81,7 +87,7 @@ public class AudioUtils {
 
             return detectNoiseInStream(audioInputStream, buffer, format, silenceThreshold);
         } catch (UnsupportedAudioFileException | IOException e) {
-            e.printStackTrace();
+            log.error("Error durign noise detection", e);
         }
         return false; // Return false if an exception occurred or no noise detected
     }

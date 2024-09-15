@@ -3,12 +3,16 @@ package tech.indus340.complexa.service;
 import io.github.sashirestela.openai.SimpleOpenAI;
 import io.github.sashirestela.openai.domain.audio.AudioResponseFormat;
 import io.github.sashirestela.openai.domain.audio.TranscriptionRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 
 @Service
 public class TranscriptionService {
+
+    private static final Logger log = LoggerFactory.getLogger(TranscriptionService.class);
 
     private final SimpleOpenAI simpleOpenAI;
 
@@ -27,7 +31,7 @@ public class TranscriptionService {
                 .build();
         var futureAudio = simpleOpenAI.audios().transcribe(audioRequest);
         var audioResponse = futureAudio.join();
-        System.out.println(audioResponse);
+        log.info("transcribed response: " + audioResponse.getText());
         return audioResponse.getText();
     }
 }

@@ -1,5 +1,7 @@
 package tech.indus340.complexa.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.sound.sampled.*;
@@ -9,6 +11,8 @@ import java.io.SequenceInputStream;
 
 @Service
 public class WavMerger {
+
+    private static final Logger log = LoggerFactory.getLogger(WavMerger.class);
 
     public File merge(File file1, File file2) {
         File outputWavFile = new File("merged.wav");
@@ -22,7 +26,7 @@ public class WavMerger {
             AudioFormat format1 = audioStream1.getFormat();
             AudioFormat format2 = audioStream2.getFormat();
             if (!format1.matches(format2)) {
-                System.out.println("Audio formats do not match.");
+                log.error("Audio formats do not match.");
                 return null;
             }
 
@@ -42,9 +46,9 @@ public class WavMerger {
             audioStream2.close();
             appendedStream.close();
             
-            System.out.println("WAV files merged successfully.");
+            log.info("WAV files merged successfully.");
         } catch (UnsupportedAudioFileException | IOException e) {
-            e.printStackTrace();
+            log.error("Cannot merge WAV files.", e);
         }
         return outputWavFile;
     }
