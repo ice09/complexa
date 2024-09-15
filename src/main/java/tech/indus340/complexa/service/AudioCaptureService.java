@@ -1,4 +1,4 @@
-package tech.indus340.complexa;
+package tech.indus340.complexa.service;
 
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,7 @@ public class AudioCaptureService {
 
     private static final int RECORD_TIME = 3000; // 1 second
     private int counter;
+
     public File captureAudio() {
         File wavFile = new File("recorded_audio" + counter++ + ".wav");
         AudioFormat format = new AudioFormat(16000, 16, 1, true, true);

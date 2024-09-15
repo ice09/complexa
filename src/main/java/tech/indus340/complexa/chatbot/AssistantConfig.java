@@ -1,0 +1,35 @@
+package tech.indus340.complexa.chatbot;
+
+import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.service.AiServices;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
+import static java.time.Duration.ofSeconds;
+
+@Configuration
+public class AssistantConfig {
+
+    @Value("${openai.key}")
+    private String openAIKey;
+
+    @Bean
+    public ChatLanguageModel model() {
+        return OpenAiChatModel.builder()
+                .apiKey(openAIKey)
+                .modelName(GPT_4_O_MINI)
+                .timeout(ofSeconds(60))
+                .build();
+    }
+
+    @Bean
+    public Assistant assistant(ChatLanguageModel model) {
+        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(10);
+        return AiServices.builder(Assistant.class).chatMemory(chatMemory).chatLanguageModel(model).build();
+    }
+}
