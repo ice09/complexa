@@ -10,9 +10,14 @@ import java.io.*;
 public class AudioRecorderService {
 
     // Use AudioUtils to record audio with the default format and threshold values
-    public File recordAudio() {
+    public File recordAudioIntention() {
         AudioFormat format = AudioUtils.getDefaultAudioFormat();
         return AudioUtils.recordAudio(format, AudioUtils.DEFAULT_SILENCE_THRESHOLD, AudioUtils.DEFAULT_SILENCE_THRESHOLD_MS);
     }
 
+    // Use AudioUtils to record audio with the default format and threshold values
+    public File recordAudioContinuous() {
+        AudioFormat format = AudioUtils.getDefaultAudioFormat();
+        return AudioUtils.recordAudio(format, AudioUtils.DEFAULT_SILENCE_THRESHOLD, AudioUtils.DEFAULT_SILENCE_CONTINUOUS_THRESHOLD_MS);
+    }
 }

@@ -8,6 +8,7 @@ public class AudioUtils {
     public static final double DEFAULT_SILENCE_THRESHOLD = 0.02; // Default threshold for detecting noise
     public static final int DEFAULT_BUFFER_SIZE = 1024; // Default buffer size
     public static final long DEFAULT_SILENCE_THRESHOLD_MS = 2000; // Silence threshold duration in milliseconds
+    public static final long DEFAULT_SILENCE_CONTINUOUS_THRESHOLD_MS = 500; // Silence threshold duration in milliseconds
     private static long silenceStartTime;
 
     // Public method for recording audio until a certain duration of silence is detected
@@ -123,10 +124,10 @@ public class AudioUtils {
             } else {
                 value = audioData[i];
             }
-            sum += value * value;
+            sum += (long) value * value;
         }
 
-        double rms = Math.sqrt(sum / (bytesRead / sampleSizeInBytes));
+        double rms = Math.sqrt(((double) sum / (double) bytesRead) * sampleSizeInBytes);
         return rms / (1 << (format.getSampleSizeInBits() - 1));
     }
 

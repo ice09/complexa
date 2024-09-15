@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tech.indus340.complexa.chatbot.Assistant;
 import tech.indus340.complexa.service.*;
+import tech.indus340.complexa.utils.WavMerger;
 import tech.indus340.complexa.utils.WavPlayer;
 
 import java.io.File;
@@ -18,9 +19,10 @@ public class AudioProcessorThread {
     private final WavPlayer wavPlayer;
     private final Assistant assistant;
     private final Text2SpeechService text2SpeechService;
+    private final WavMerger wavMerger;
     private long timeSinceLastResponse;
 
-    public AudioProcessorThread(AudioCaptureService audioCaptureService, NoiseDetectorService noiseDetectorService, AudioRecorderService audioRecorderService, TranscriptionService transcriptionService, WavPlayer wavPlayer, Assistant assistant, Text2SpeechService text2SpeechService) {
+    public AudioProcessorThread(AudioCaptureService audioCaptureService, NoiseDetectorService noiseDetectorService, AudioRecorderService audioRecorderService, TranscriptionService transcriptionService, WavPlayer wavPlayer, Assistant assistant, Text2SpeechService text2SpeechService, WavMerger wavMerger) {
         this.audioCaptureService = audioCaptureService;
         this.noiseDetectorService = noiseDetectorService;
         this.transcriptionService = transcriptionService;
@@ -28,6 +30,7 @@ public class AudioProcessorThread {
         this.wavPlayer = wavPlayer;
         this.assistant = assistant;
         this.text2SpeechService = text2SpeechService;
+        this.wavMerger = wavMerger;
     }
 
     @Scheduled(fixedRate = 2000) // Run every 2 seconds to allow time for recording and processing
@@ -35,25 +38,30 @@ public class AudioProcessorThread {
         System.out.println("scanning");
         File audioFile = audioCaptureService.captureAudio();
         if (noiseDetectorService.detectNoise(audioFile)) {
-            String transscribed = transcriptionService.transcribe(audioFile);
-            boolean timeElapsedTillLastResponse = System.currentTimeMillis() < timeSinceLastResponse + 10000;
-            if (transscribed.toLowerCase().contains("omplex") || timeElapsedTillLastResponse) {
-                File instructionsWav = null;
-                if (!timeElapsedTillLastResponse) {
+            boolean continuousDialogueMode = System.currentTimeMillis() < timeSinceLastResponse + 5000;
+            File instructionsWav;
+            if (!continuousDialogueMode) {
+                String transscribed = transcriptionService.transcribe(audioFile);
+                if (transscribed.toLowerCase().contains("omplex")) {
                     wavPlayer.playAcc();
-                    System.out.println("recording started");
-                    instructionsWav = audioRecorderService.recordAudio();
-                    System.out.println("recording stopped");
+                    System.out.println("recording intention started");
+                    instructionsWav = audioRecorderService.recordAudioIntention();
+                    System.out.println("recording intention stopped");
                 } else {
-                    instructionsWav = audioFile;
+                    return;
                 }
-                String message = transcriptionService.transcribe(instructionsWav);
-                String complexaResponse = assistant.chat(message);
-                System.out.println(complexaResponse);
-                text2SpeechService.tts(complexaResponse);
-                wavPlayer.playResponse();
-                timeSinceLastResponse = System.currentTimeMillis();
+            } else {
+                System.out.println("recording dialog mode started");
+                instructionsWav = audioRecorderService.recordAudioContinuous();
+                System.out.println("recording dialog mode stopped");
+                instructionsWav = wavMerger.merge(audioFile, instructionsWav);
             }
+            String message = transcriptionService.transcribe(instructionsWav);
+            String complexaResponse = assistant.chat(message);
+            System.out.println(complexaResponse);
+            text2SpeechService.tts(complexaResponse);
+            wavPlayer.playResponse();
+            timeSinceLastResponse = System.currentTimeMillis();
         }
     }
 }
