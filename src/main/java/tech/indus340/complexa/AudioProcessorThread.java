@@ -14,7 +14,7 @@ import java.io.File;
 @Service
 public class AudioProcessorThread {
 
-    public static final int CONTINUOUS_DIALOG_THRESHOLD = 5000;
+    public static final int CONTINUOUS_DIALOG_THRESHOLD = 7000; // is dependent on schedule rate
     private static final Logger log = LoggerFactory.getLogger(AudioProcessorThread.class);
 
     private final AudioCaptureService audioCaptureService;
