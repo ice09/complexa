@@ -87,7 +87,7 @@ public class AudioUtils {
 
             return detectNoiseInStream(audioInputStream, buffer, format, silenceThreshold);
         } catch (UnsupportedAudioFileException | IOException e) {
-            log.error("Error durign noise detection", e);
+            log.error("Error during noise detection", e);
         }
         return false; // Return false if an exception occurred or no noise detected
     }

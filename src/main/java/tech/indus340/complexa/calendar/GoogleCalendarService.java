@@ -87,9 +87,9 @@ public class GoogleCalendarService {
 
         // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
-        Events events = service.events().list("xxxx@googlemail.com")
-                .setMaxResults(10)
+        Events events = service.events().list("sylvia.culum@googlemail.com")
                 .setTimeMin(now)
+                .setMaxResults(50)
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
